@@ -238,7 +238,7 @@ def insights_page():
 
     if st.button("Get AI-Powered Recommendations"):
         prompt = (
-            "- You are an ai so be friendly, say who are you and interact with them.\n"
+            "- You are an ai so be friendly, say who are you and then said about on their result.\n"
             "- You are a concise mental health coach.\n"
             f"- You need to say the User risk level: {sa_cat}.\n"
             f"- You need to say the Anxiety level: {latest['Anxiety Levels (1-10)']}.\n"

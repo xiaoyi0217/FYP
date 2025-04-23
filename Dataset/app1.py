@@ -54,27 +54,27 @@ if not api_key:
     st.stop()
 
 # ==== OpenRouter AI Helper ==== #
-    def get_openrouter_response(prompt):
-        try:
-            response = requests.post(
-                url="https://openrouter.ai/api/v1/chat/completions",
-                headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
-                },
-                data=json.dumps({
-                "model": "deepseek/deepseek-chat:free",  # DeepSeek Model
-                "messages": [
-                    {"role": "user", "content": prompt}
-                    ]
-                })
-            )
-            response.raise_for_status()
-            return response.json()["choices"][0]["message"]["content"]
-        except Exception as e:
-            st.error(f"OpenRouter API error: {e}")
-            return None
-
+# Define the function OUTSIDE the if block
+def get_openrouter_response(prompt):
+    try:
+        response = requests.post(
+            url="https://openrouter.ai/api/v1/chat/completions",
+            headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            },
+            data=json.dumps({
+            "model": "deepseek/deepseek-chat:free",  # DeepSeek Model
+            "messages": [
+                {"role": "user", "content": prompt}
+                ]
+            })
+        )
+        response.raise_for_status()
+        return response.json()["choices"][0]["message"]["content"]
+    except Exception as e:
+        st.error(f"OpenRouter API error: {e}")
+    return None
 # ==== Load ML Models ==== #
 @st.cache_resource
 def load_models():

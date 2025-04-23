@@ -240,8 +240,8 @@ def insights_page():
         prompt = (
             "- You are a ai chat so be friendly and say who are you.\n"
             "- You are a concise mental health coach.\n"
-            f"- User risk level: {sa_cat}.\n"
-            f"- Anxiety level: {latest['Anxiety Levels (1-10)']}.\n"
+            "- User risk level: {sa_cat}.\n"
+            "- Anxiety level: {latest['Anxiety Levels (1-10)']}.\n"
             "- Provide exactly 3 bullet points of actionable tips."
         )
         response = get_openrouter_response(prompt)

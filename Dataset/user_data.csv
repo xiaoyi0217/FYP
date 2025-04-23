@@ -1,0 +1,10 @@
+username,Likes Received (per post),Comments Received (per post),Peer Comparison Frequency (1-10),Socioeconomic Status,Education Level,Body Image Impact (1-10),Sleep Quality Impact (1-10),Self Confidence Impact (1-10),Cyberbullying Experience (1-10),Anxiety Levels (1-10),Age Category,Total Social Interaction,Usage Intensity,Usage Anxiety Interaction,Social Anxiety Category,Cluster,Timestamp
+kuan,Bachelor's,High,5,5,5,5,1,5,Adult,10,Medium,15.0,0,0,Medium,1,2025-04-23 01:52:13
+kuan,0,0,5,5,5,5,1,5,0,10,2,15.0,500,249,Medium,1,2025-04-23 02:55:38
+kuan,2,1,10,10,10,10,10,10,0,1000,0,200.0,0.0,0.0,Medium,1,2025-04-23 02:55:55
+kuan,0,0,5,5,5,5,1,5,0,10,2,15.0,1.0,0.5,Medium,1,2025-04-23 02:57:40
+kuan,0,0,5,5,5,5,1,5,0,10,2,15.0,0.6666666666666666,0.3333333333333333,Medium,1,2025-04-23 03:06:25
+muru,0,0,5,5,5,5,1,5,0,10,2,15.0,0.5,0.25,Medium,1,2025-04-23 10:09:17
+muru,0,0,1,1,1,1,1,1,0,10,2,3.0,0.4,0.2,Low,1,2025-04-23 10:09:26
+kuan,0,0,5,5,5,5,1,5,0,10,2,15.0,0.3333333333333333,0.16666666666666666,Medium,1,2025-04-23 10:11:57
+kuan,2,1,10,10,10,10,10,10,0,1000,0,240.0,0.2857142857142857,0.14285714285714285,Medium,1,2025-04-23 10:16:54

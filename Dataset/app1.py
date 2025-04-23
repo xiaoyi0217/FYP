@@ -74,9 +74,9 @@ def get_ollama_response(server_url, model_name, prompt, max_tokens=256, temperat
 # ==== Load ML Models ==== #
 @st.cache_resource
 def load_models():
-    with open('production_kmeans_model.pkl','rb') as f: kmeans = pickle.load(f)
-    with open('kmeans_scaler.pkl','rb')       as f: scaler = pickle.load(f)
-    with open('best_xgb_model.pkl','rb')      as f: xgb    = pickle.load(f)
+    with open('Dataset/production_kmeans_model.pkl','rb') as f: kmeans = pickle.load(f)
+    with open('Dataset/kmeans_scaler.pkl','rb')       as f: scaler = pickle.load(f)
+    with open('Dataset/best_xgb_model.pkl','rb')      as f: xgb    = pickle.load(f)
     return kmeans, scaler, xgb
 
 kmeans_model, kmeans_scaler, xgb_model = load_models()

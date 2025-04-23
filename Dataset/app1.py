@@ -5,6 +5,7 @@ import numpy as np
 import plotly.express as px
 from datetime import datetime
 import requests
+import json
 import os
 
 # ==== Page & CSS Setup ==== #
@@ -43,22 +44,35 @@ if not st.session_state.logged_in:
 
 st.sidebar.write(f"👋 Hello, **{st.session_state.username}**")
 
-# ==== DATABASE CONNECTION + APP LOGIC BELOW ==== #
+# APP LOGIC BELOW #
+# ==== API KEY SETUP (Hybrid) ==== #
+st.write("Secrets content:", st.secrets._secrets)
 
-# ==== Ollama Helper (AI Tips) ==== #
-def get_ollama_response(server_url, model_name, prompt, max_tokens=256, temperature=0.7):
+api_key = st.secrets.get("OPENROUTER_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+if not api_key:
+    st.error("OpenRouter API key is missing! Add it to Streamlit secrets or set as environment variable.")
+    st.stop()
+
+# ==== OpenRouter AI Helper ==== #
+def get_openrouter_response(prompt):
     try:
-        resp = requests.post(
-            server_url + "/v1/completions",
-            json={"model": model_name, "prompt": prompt,
-                  "max_tokens": max_tokens, "temperature": temperature},
-            headers={"Content-Type": "application/json"}
+        response = requests.post(
+            url="https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            data=json.dumps({
+                "model": "google/gemini-2.5-pro-exp-03-25:free",
+                "messages": [{"role": "user", "content": prompt}]
+            })
         )
-        resp.raise_for_status()
-        return resp.json()['choices'][0]['text'].strip()
+        response.raise_for_status()
+        return response.json()["choices"][0]["message"]["content"]
     except Exception as e:
-        st.error(f"Ollama API error: {e}")
+        st.error(f"OpenRouter API error: {e}")
         return None
+
 
 # ==== Load ML Models ==== #
 @st.cache_resource
@@ -95,7 +109,7 @@ FEATURE_NAMES = [
     'Usage Anxiety Interaction'
 ]
 
-DATA_FILE = "user_data.csv"
+DATA_FILE = "Dataset/user_data.csv"
 if not os.path.exists(DATA_FILE):
     cols = ['username'] + FEATURE_NAMES + ['Social Anxiety Category','Cluster','Timestamp']
     pd.DataFrame(columns=cols).to_csv(DATA_FILE, index=False)
@@ -228,9 +242,7 @@ def insights_page():
             f"- Anxiety level: {latest['Anxiety Levels (1-10)']}.\n"
             "- Provide exactly 3 bullet points of actionable tips."
         )
-        response = get_ollama_response(
-            "http://127.0.0.1:11434", "deepseek-r1:8b", prompt
-        )
+        response = get_openrouter_response(prompt)
         if response:
             st.markdown("#### AI-Powered Recommendations")
             st.markdown(response)

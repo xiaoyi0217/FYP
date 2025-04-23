@@ -5,7 +5,6 @@ import numpy as np
 import plotly.express as px
 from datetime import datetime
 import requests
-import pyodbc
 import os
 
 # ==== Page & CSS Setup ==== #
@@ -45,16 +44,6 @@ if not st.session_state.logged_in:
 st.sidebar.write(f"👋 Hello, **{st.session_state.username}**")
 
 # ==== DATABASE CONNECTION + APP LOGIC BELOW ==== #
-@st.cache_resource
-def get_connection():
-    return pyodbc.connect(
-        DRIVER="{ODBC Driver 17 for SQL Server}",
-        SERVER="XIAOYI",
-        DATABASE="FYP",
-        Trusted_Connection="yes"
-    )
-
-conn = get_connection()
 
 # ==== Ollama Helper (AI Tips) ==== #
 def get_ollama_response(server_url, model_name, prompt, max_tokens=256, temperature=0.7):

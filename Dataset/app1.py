@@ -23,7 +23,7 @@ def local_css(file_name):
     except FileNotFoundError:
         st.warning("CSS file not found! Using default styling.")
 
-local_css("style.css")
+local_css("Dataset/style.css")
 
 # ==== SIMPLE TEXT‑BASED AUTHENTICATION ==== #
 if "logged_in" not in st.session_state:

@@ -44,6 +44,7 @@ if not st.session_state.logged_in:
 
 st.sidebar.write(f"👋 Hello, **{st.session_state.username}**")
 
+
 # APP LOGIC BELOW #
 # ==== API KEY SETUP (Hybrid) ==== #
 st.write("Secrets content:", st.secrets._secrets)
@@ -80,10 +81,10 @@ def get_openrouter_response(prompt):
 def load_models():
     with open('Dataset/production_kmeans_model.pkl','rb') as f: kmeans = pickle.load(f)
     with open('Dataset/kmeans_scaler.pkl','rb')       as f: scaler = pickle.load(f)
-    with open('Dataset/best_xgb_model.pkl','rb')      as f: xgb    = pickle.load(f)
-    return kmeans, scaler, xgb
+    with open('Dataset/best_rf_model.pkl','rb')      as f: rf    = pickle.load(f)
+    return kmeans, scaler, rf
 
-kmeans_model, kmeans_scaler, xgb_model = load_models()
+kmeans_model, kmeans_scaler, rf_model = load_models()
 
 # ==== Encoding Mappings ==== #
 EDU_LEVEL_MAP       = {"Bachelor's":0,"Doctorate":1,"High School":2,"Master's":3}
@@ -116,7 +117,7 @@ if not os.path.exists(DATA_FILE):
     pd.DataFrame(columns=cols).to_csv(DATA_FILE, index=False)
 
 def home_page():
-    st.title("🏠 Welcome to MindEase")
+    st.title("🏠Welcome to MindEase")
     st.write("""
         MindEase combines AI-driven classification and clustering to help you track
         and manage social anxiety. Log daily metrics, view your progress, and get tips.
@@ -162,7 +163,7 @@ def new_entry_page():
                 USAGE_INTENSITY_MAP[usage_intensity_label], ua_interaction
             ]).reshape(1, -1)
 
-            pred        = xgb_model.predict(raw_feat)[0]
+            pred        = rf_model.predict(raw_feat)[0]
             pred_label  = SOCIAL_ANX_MAP[pred]
             cluster_id  = int(kmeans_model.predict(kmeans_scaler.transform(raw_feat))[0])
 

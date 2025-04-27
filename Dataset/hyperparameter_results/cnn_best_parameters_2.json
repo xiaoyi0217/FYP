@@ -1,0 +1,7 @@
+{
+    "dropout_rate": 0.3,
+    "learning_rate": 0.0014419497855851235,
+    "dense_units": 384,
+    "filters_1": 96,
+    "kernel_size_1": 4
+}

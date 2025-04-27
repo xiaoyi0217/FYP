@@ -47,8 +47,6 @@ st.sidebar.write(f"👋 Hello, **{st.session_state.username}**")
 
 # APP LOGIC BELOW #
 # ==== API KEY SETUP (Hybrid) ==== #
-st.write("Secrets content:", st.secrets._secrets)
-
 api_key = st.secrets.get("OPENROUTER_API_KEY") or os.getenv("OPENROUTER_API_KEY")
 if not api_key:
     st.error("OpenRouter API key is missing! Add it to Streamlit secrets or set as environment variable.")

@@ -155,15 +155,30 @@ def new_entry_page():
                 usage_intensity_label = 'High'
 
             raw_feat = np.array([
-                likes, comments,peer,
-                SOCIOECONOMIC_MAP[socio], EDU_LEVEL_MAP[education],
-                body, sleep_quality,conf, cyber, anxiety,
-                AGE_CAT_MAP[age_cat], total_int,
-                USAGE_INTENSITY_MAP[usage_intensity_label], ua_interaction
-            ]).reshape(1, -1)
+                likes,   # Likes Received (per post)
+                comments, # Comments Received (per post)
+                peer,     # Peer Comparison Frequency (1-10)
+                SOCIOECONOMIC_MAP[socio],  # Socioeconomic Status
+                EDU_LEVEL_MAP[education],  # Education Level
+                body,     # Body Image Impact (1-10)
+                sleep_quality,  # Sleep Quality Impact (1-10)
+                conf,     # Self Confidence Impact (1-10)
+                cyber,    # Cyberbullying Experience (1-10)
+                anxiety,  # Anxiety Levels (1-10)
+                AGE_CAT_MAP[age_cat],  # Age Category
+                total_int,  # Total Social Interaction
+                USAGE_INTENSITY_MAP[usage_intensity_label],  # Usage Intensity
+                ua_interaction  # Usage Anxiety Interaction
+            ]).reshape(1, -1)  # Ensure it's a 2D array (1 sample, 14 features)
 
-            pred        = rf_model.predict(raw_feat)[0]
-            pred_label  = SOCIAL_ANX_MAP[pred]
+            # Print the shape to check if it's correct
+            print("raw_feat shape:", raw_feat.shape)  # Should print (1, 14)
+
+# Make the prediction using the loaded model
+            pred = rf_model.predict(raw_feat)
+
+# Convert prediction to label using the mapping
+            pred_label = SOCIAL_ANX_MAP[pred[0]]
             cluster_id  = int(kmeans_model.predict(kmeans_scaler.transform(raw_feat))[0])
 
             entry = pd.DataFrame([{

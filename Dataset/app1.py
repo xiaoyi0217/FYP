@@ -90,7 +90,7 @@ EDU_LEVEL_MAP       = {"Bachelor's":0,"Doctorate":1,"High School":2,"Master's":3
 SOCIOECONOMIC_MAP   = {'High':0,'Low':1,'Middle':2}
 AGE_CAT_MAP        = {'Adult':0,'Senior':1,'Youth':2}
 USAGE_INTENSITY_MAP = {'Low':1,'Medium':2,'High':0}
-SOCIAL_ANX_MAP      = {0:'High',1:'Low',2:'Medium'}
+SOCIAL_ANX_MAP      = {2:'High',0:'Low',1:'Medium'}
 PLOT_MAP            = {'Low':1,'Medium':2,'High':3}
 
 FEATURE_NAMES = [

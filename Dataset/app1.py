@@ -171,32 +171,38 @@ def new_entry_page():
                 'Usage Anxiety Interaction': [ua_interaction]
             })
 
-            pred        = rf_model.predict(raw_feat_df)[0]
-            pred_label  = SOCIAL_ANX_MAP[pred]
-            cluster_id  = int(kmeans_model.predict(kmeans_scaler.transform(raw_feat_df))[0])
+            # Convert the DataFrame to a numpy array
+            raw_feat = raw_feat_df.values
 
+# Make the prediction with the correct format
+            pred = rf_model.predict(raw_feat)[0]
+            pred_label = SOCIAL_ANX_MAP[pred]
+            cluster_id = int(kmeans_model.predict(kmeans_scaler.transform(raw_feat))[0])
+
+# Create the DataFrame with the prediction results
             entry = pd.DataFrame([{
-                'username':           st.session_state.username,
-                'Education Level':    EDU_LEVEL_MAP[education],
-                'Socioeconomic Status':SOCIOECONOMIC_MAP[socio],
-                'Peer Comparison Frequency (1-10)':    peer,
-                'Body Image Impact (1-10)':  body,
-                'Sleep Quality Impact (1-10)':sleep_quality,
-                'Self Confidence Impact (1-10)':    conf,
-                'Cyberbullying Experience (1-10)':      cyber,
-                'Anxiety Levels (1-10)':      anxiety,
-                'Age Category':       AGE_CAT_MAP[age_cat],
-                'Total Interaction':  total_int,
-                'Usage Intensity':    USAGE_INTENSITY_MAP[usage_intensity_label],
-                'Usage-Anxiety':      ua_interaction,
-                'Likes Received (per post)':     likes,
-                'Comments Received (per post)':  comments,
-                'Social Anxiety Category':  pred_label,
-                'cluster':            cluster_id,
-                'Timestamp':          datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    'username':           st.session_state.username,
+    'Education Level':    EDU_LEVEL_MAP[education],
+    'Socioeconomic Status':SOCIOECONOMIC_MAP[socio],
+    'Peer Comparison Frequency (1-10)':    peer,
+    'Body Image Impact (1-10)':  body,
+    'Sleep Quality Impact (1-10)':sleep_quality,
+    'Self Confidence Impact (1-10)':    conf,
+    'Cyberbullying Experience (1-10)':      cyber,
+    'Anxiety Levels (1-10)':      anxiety,
+    'Age Category':       AGE_CAT_MAP[age_cat],
+    'Total Interaction':  total_int,
+    'Usage Intensity':    USAGE_INTENSITY_MAP[usage_intensity_label],
+    'Usage-Anxiety':      ua_interaction,
+    'Likes Received (per post)':     likes,
+    'Comments Received (per post)':  comments,
+    'Social Anxiety Category':  pred_label,
+    'cluster':            cluster_id,
+    'Timestamp':          datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }])
             entry.to_csv(DATA_FILE, mode='a', index=False, header=False)
             st.success(f"Logged! Risk: **{pred_label}**, Cluster: **{cluster_id}**")
+            
 
 def progress_page():
     st.header("📈 Your Progress Over Time")

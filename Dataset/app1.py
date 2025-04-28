@@ -49,7 +49,9 @@ client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
 
 def get_gemini_response(prompt: str) -> str:
     try:
+        # create a fresh chat session targeting the chat model
         chat = client.chats.create(model="chat-bison-001")
+        # send the user’s prompt
         resp = chat.send_message(message=prompt)
         return resp.text
     except Exception as e:

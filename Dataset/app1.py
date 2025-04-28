@@ -46,14 +46,14 @@ st.sidebar.write(f"👋 Hello, **{st.session_state.username}**")
 
 # ==== Gemini AI Helper ====
 # 2) Initialize the client once
-client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
+client = genai.Client(
+    api_key=st.secrets["GOOGLE_API_KEY"],
+    vertexai=True
+)
 
-# 3) Replace your generate_content call with chats.create/send_message
 def get_gemini_response(prompt: str) -> str:
     try:
-        # create a new chat session for chat-bison-001
         chat = client.chats.create(model="chat-bison-001")
-        # send the prompt and get back the assistant reply
         resp = chat.send_message(message=prompt)
         return resp.text
     except Exception as e:

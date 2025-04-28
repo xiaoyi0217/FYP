@@ -154,17 +154,26 @@ def new_entry_page():
             else:
                 usage_intensity_label = 'High'
 
-            raw_feat = np.array([
-                likes, comments,peer,
-                SOCIOECONOMIC_MAP[socio], EDU_LEVEL_MAP[education],
-                body, sleep_quality,conf, cyber, anxiety,
-                AGE_CAT_MAP[age_cat], total_int,
-                USAGE_INTENSITY_MAP[usage_intensity_label], ua_interaction
-            ]).reshape(1, -1)
+            raw_feat_df = pd.DataFrame({
+                'Likes Received (per post)': [likes],
+                'Comments Received (per post)': [comments],
+                'Peer Comparison Frequency (1-10)': [peer],
+                'Socioeconomic Status': [SOCIOECONOMIC_MAP[socio]],
+                'Education Level': [EDU_LEVEL_MAP[education]],
+                'Body Image Impact (1-10)': [body],
+                'Sleep Quality Impact (1-10)': [sleep_quality],
+                'Self Confidence Impact (1-10)': [conf],
+                'Cyberbullying Experience (1-10)': [cyber],
+                'Anxiety Levels (1-10)': [anxiety],
+                'Age Category': [AGE_CAT_MAP[age_cat]],
+                'Total Social Interaction': [total_int],
+                'Usage Intensity': [USAGE_INTENSITY_MAP[usage_intensity_label]],
+                'Usage Anxiety Interaction': [ua_interaction]
+            })
 
-            pred        = rf_model.predict(raw_feat)[0]
+            pred        = rf_model.predict(raw_feat_df)[0]
             pred_label  = SOCIAL_ANX_MAP[pred]
-            cluster_id  = int(kmeans_model.predict(kmeans_scaler.transform(raw_feat))[0])
+            cluster_id  = int(kmeans_model.predict(kmeans_scaler.transform(raw_feat_df))[0])
 
             entry = pd.DataFrame([{
                 'username':           st.session_state.username,

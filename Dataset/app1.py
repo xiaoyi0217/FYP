@@ -45,19 +45,19 @@ if not st.session_state.logged_in:
 st.sidebar.write(f"👋 Hello, **{st.session_state.username}**")
 
 # ==== Gemini AI Helper ====
-# configure once
+# 1) Configure once, at the top of your script
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
-# create your model object (do this at module scope so you don’t re-init on every call)
-model = genai.GenerativeModel("models/chat-bison-001")
+# 2) Instantiate a chat model object (module‐scope so it isn’t re-created on every call)
+chat_model = genai.GenerativeModel("models/chat-bison-001")
 
 def get_gemini_response(prompt: str) -> str:
     try:
-        # start a fresh chat
-        chat = model.start_chat()
-        # send the prompt: returns a ChatResponse with `.text`
-        resp = chat.send_message(prompt)
-        return resp.text
+        # start a fresh chat session
+        chat = chat_model.start_chat()
+        # send the prompt and capture the reply
+        response = chat.send_message(prompt)
+        return response.text
     except Exception as e:
         st.error(f"Gemini API error: {e}")
         return None

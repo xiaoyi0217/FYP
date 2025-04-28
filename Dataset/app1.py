@@ -6,6 +6,7 @@ import plotly.express as px
 from datetime import datetime
 import os
 import google.generativeai as genai
+from google import genai
 
 
 # ==== Page & CSS Setup ==== #
@@ -45,18 +46,13 @@ if not st.session_state.logged_in:
 st.sidebar.write(f"👋 Hello, **{st.session_state.username}**")
 
 # ==== Gemini AI Helper ====
-# configure once
-genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
 
 def get_gemini_response(prompt: str) -> str:
     try:
-        completion = genai.generate_text(
-            model="models/text-bison-001",   # v1beta text model
-            prompt=prompt,
-            temperature=0.7,
-            max_output_tokens=512
-        )
-        return completion.result        # the generated text
+        chat = client.chats.create(model="chat-bison-001")
+        resp = chat.send_message(message=prompt)
+        return resp.text
     except Exception as e:
         st.error(f"Gemini API error: {e}")
         return None
@@ -221,15 +217,14 @@ def insights_page():
         st.info("Try setting SM limits and positive self-talk.")
     else:
         st.success("Great! Maintain healthy habits and support peers.")
-
+    
     if st.button("Get AI-Powered Recommendations"):
         prompt = (
-            "- You are an ai so be friendly, say who are you and then said about on their result.\n"
-            f"Here is the user name: {st.session_state.username}"
-            "- You are a concise mental health coach,make it funny,make it you are an ai.\n"
-            f"- You need to say the User Social Anxiety level: {sa_cat}.\n"
-            f"- You need to say the Anxiety level: {latest['Anxiety Levels (1-10)']}.\n"
-            "- Provide exactly 3 bullet points of actionable tips based on their result everytime need to be different."
+            f"- You are a friendly AI mental health coach.\n"
+            f"- User: {st.session_state.username}\n"
+            f"- Social Anxiety Category: {sa_cat}\n"
+            f"- Anxiety Level (1–10): {latest['Anxiety Levels (1-10)']}\n"
+            "- Provide exactly 3 actionable bullet points, and make them funny."
         )
         response = get_gemini_response(prompt)
         if response:

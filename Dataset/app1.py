@@ -4,9 +4,9 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 from datetime import datetime
-import requests
-import json
 import os
+import google.generativeai as genai
+
 
 # ==== Page & CSS Setup ==== #
 st.set_page_config(
@@ -44,35 +44,22 @@ if not st.session_state.logged_in:
 
 st.sidebar.write(f"👋 Hello, **{st.session_state.username}**")
 
-# APP LOGIC BELOW #
-# ==== API KEY SETUP (Hybrid) ==== #
-api_key = st.secrets.get("OPENROUTER_API_KEY") or os.getenv("OPENROUTER_API_KEY")
-if not api_key:
-    st.error("OpenRouter API key is missing! Add it to Streamlit secrets or set as environment variable.")
-    st.stop()
+# ==== Gemini AI Helper ====
+genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
-# ==== OpenRouter AI Helper ==== #
-# Define the function OUTSIDE the if block
-def get_openrouter_response(prompt):
+def get_gemini_response(prompt: str) -> str:
     try:
-        response = requests.post(
-            url="https://openrouter.ai/api/v1/chat/completions",
-            headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            },
-            data=json.dumps({
-            "model": "deepseek/deepseek-chat:free",  # DeepSeek Model
-            "messages": [
-                {"role": "user", "content": prompt}
-                ]
-            })
+        response = genai.chat.completions.create(
+            model="models/chat-bison-001",
+            messages=[{"author":"user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=512
         )
-        response.raise_for_status()
-        return response.json()["choices"][0]["message"]["content"]
+        return response.choices[0].message.content
     except Exception as e:
-        st.error(f"OpenRouter API error: {e}")
-    return None
+        st.error(f"Gemini API error: {e}")
+        return None
+    
 # ==== Load ML Models ==== #
 @st.cache_resource
 def load_models():
@@ -243,7 +230,7 @@ def insights_page():
             f"- You need to say the Anxiety level: {latest['Anxiety Levels (1-10)']}.\n"
             "- Provide exactly 3 bullet points of actionable tips based on their result everytime need to be different."
         )
-        response = get_openrouter_response(prompt)
+        response = get_gemini_response(prompt)
         if response:
             st.markdown("#### AI-Powered Recommendations")
             st.markdown(response)

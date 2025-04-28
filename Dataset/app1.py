@@ -79,41 +79,31 @@ def get_openrouter_response(prompt):
 # ==== Load ML Models ==== #
 @st.cache_resource
 def load_models():
-    with open('Dataset/production_kmeans_model.pkl','rb') as f: kmeans = pickle.load(f)
-    with open('Dataset/kmeans_scaler.pkl','rb')       as f: scaler = pickle.load(f)
-    with open('Dataset/best_rf_model.pkl','rb')      as f: rf    = pickle.load(f)
+    with open('Dataset/production_kmeans_model.pkl', 'rb') as f: kmeans = pickle.load(f)
+    with open('Dataset/kmeans_scaler.pkl', 'rb') as f: scaler = pickle.load(f)
+    with open('Dataset/best_rf_model.pkl', 'rb') as f: rf = pickle.load(f)
     return kmeans, scaler, rf
 
 kmeans_model, kmeans_scaler, rf_model = load_models()
 
 # ==== Encoding Mappings ==== #
-EDU_LEVEL_MAP       = {"Bachelor's":0,"Doctorate":1,"High School":2,"Master's":3}
-SOCIOECONOMIC_MAP   = {'High':0,'Low':1,'Middle':2}
-AGE_CAT_MAP        = {'Adult':0,'Senior':1,'Youth':2}
-USAGE_INTENSITY_MAP = {'Low':1,'Medium':2,'High':0}
-SOCIAL_ANX_MAP      = {2:'High',0:'Low',1:'Medium'}
-PLOT_MAP            = {'Low':1,'Medium':2,'High':3}
+EDU_LEVEL_MAP = {"Bachelor's": 0, "Doctorate": 1, "High School": 2, "Master's": 3}
+SOCIOECONOMIC_MAP = {'High': 0, 'Low': 1, 'Middle': 2}
+AGE_CAT_MAP = {'Adult': 0, 'Senior': 1, 'Youth': 2}
+USAGE_INTENSITY_MAP = {'Low': 1, 'Medium': 2, 'High': 0}
+SOCIAL_ANX_MAP = {2: 'High', 0: 'Low', 1: 'Medium'}
+PLOT_MAP = {'Low': 1, 'Medium': 2, 'High': 3}
 
 FEATURE_NAMES = [
-    'Likes Received (per post)',
-    'Comments Received (per post)',
-    'Peer Comparison Frequency (1-10)',
-    'Socioeconomic Status',
-    'Education Level',
-    'Body Image Impact (1-10)',
-    'Sleep Quality Impact (1-10)',
-    'Self Confidence Impact (1-10)',
-    'Cyberbullying Experience (1-10)',
-    'Anxiety Levels (1-10)',
-    'Age Category',
-    'Total Social Interaction',
-    'Usage Intensity',
-    'Usage Anxiety Interaction'
+    'Likes Received (per post)', 'Comments Received (per post)', 'Peer Comparison Frequency (1-10)',
+    'Socioeconomic Status', 'Education Level', 'Body Image Impact (1-10)', 'Sleep Quality Impact (1-10)',
+    'Self Confidence Impact (1-10)', 'Cyberbullying Experience (1-10)', 'Anxiety Levels (1-10)', 
+    'Age Category', 'Total Social Interaction', 'Usage Intensity', 'Usage Anxiety Interaction'
 ]
 
 DATA_FILE = "Dataset/user_data.csv"
 if not os.path.exists(DATA_FILE):
-    cols = ['username'] + FEATURE_NAMES + ['Social Anxiety Category','Cluster','Timestamp']
+    cols = ['username'] + FEATURE_NAMES + ['Social Anxiety Category', 'Cluster', 'Timestamp']
     pd.DataFrame(columns=cols).to_csv(DATA_FILE, index=False)
 
 def home_page():
@@ -128,18 +118,18 @@ def new_entry_page():
     with st.form("entry_form", clear_on_submit=True):
         c1, c2 = st.columns(2)
         with c1:
-            education    = st.selectbox("Education Level", list(EDU_LEVEL_MAP.keys()))
-            socio  = st.selectbox("Socioeconomic Status", list(SOCIOECONOMIC_MAP.keys()))
-            peer   = st.slider("Peer Comparison (1-10)",1,10,5)
-            body   = st.slider("Body Image Impact (1-10)",1,10,5)
-            sleep_quality  = st.slider("Sleep Quality Impact (1-10)",1,10,5)
-            conf   = st.slider("Self Confidence Impact (1-10)",1,10,5)
+            education = st.selectbox("Education Level", list(EDU_LEVEL_MAP.keys()))
+            socio = st.selectbox("Socioeconomic Status", list(SOCIOECONOMIC_MAP.keys()))
+            peer = st.slider("Peer Comparison (1-10)", 1, 10, 5)
+            body = st.slider("Body Image Impact (1-10)", 1, 10, 5)
+            sleep_quality = st.slider("Sleep Quality Impact (1-10)", 1, 10, 5)
+            conf = st.slider("Self Confidence Impact (1-10)", 1, 10, 5)
         with c2:
-            cyber = st.slider("Cyberbullying Experience (1-10)",1,10,1)
-            anxiety=st.slider("Anxiety Levels (1-10)",1,10,5)
-            age_cat   = st.selectbox("Age Category", list(AGE_CAT_MAP.keys()))
-            total_int = st.number_input("Total Social Interaction",0,10000,10)
-            sm_usage_hrs   = st.number_input("Daily SM Usage (hrs)",0.0,24.0,3.0)
+            cyber = st.slider("Cyberbullying Experience (1-10)", 1, 10, 1)
+            anxiety = st.slider("Anxiety Levels (1-10)", 1, 10, 5)
+            age_cat = st.selectbox("Age Category", list(AGE_CAT_MAP.keys()))
+            total_int = st.number_input("Total Social Interaction", 0, 10000, 10)
+            sm_usage_hrs = st.number_input("Daily SM Usage (hrs)", 0.0, 24.0, 3.0)
 
         if st.form_submit_button("Submit"):
             df_existing = pd.read_csv(DATA_FILE)
@@ -172,39 +162,35 @@ def new_entry_page():
                 'Usage Anxiety Interaction': [ua_interaction]
             })
 
-# Ensure raw_feat is a 2D numpy array and print its type
+            # Convert to numpy array for prediction
             raw_feat = raw_feat_df.values  # This should now be a 2D numpy array
-            print(f"raw_feat type: {type(raw_feat)}")  # Check type of raw_feat
 
-# Ensure the model is correct
-            print(f"Type of rf_model: {type(rf_model)}")  # Should print <class 'sklearn.ensemble._forest.RandomForestClassifier'>
-
-# Make the prediction with the correct format
+            # Make the prediction with the correct format
             if isinstance(rf_model, RandomForestClassifier):  # Ensure it is the correct model
                 pred = rf_model.predict(raw_feat)  # This should now work with the numpy array
                 pred_label = SOCIAL_ANX_MAP[pred[0]]  # Map the prediction to the label using SOCIAL_ANX_MAP
                 cluster_id = int(kmeans_model.predict(kmeans_scaler.transform(raw_feat))[0])
 
-    # Creating the entry DataFrame
+                # Creating the entry DataFrame
                 entry = pd.DataFrame([{
-        'username':           st.session_state.username,
-        'Education Level':    EDU_LEVEL_MAP[education],
-        'Socioeconomic Status':SOCIOECONOMIC_MAP[socio],
-        'Peer Comparison Frequency (1-10)':    peer,
-        'Body Image Impact (1-10)':  body,
-        'Sleep Quality Impact (1-10)':sleep_quality,
-        'Self Confidence Impact (1-10)':    conf,
-        'Cyberbullying Experience (1-10)':      cyber,
-        'Anxiety Levels (1-10)':      anxiety,
-        'Age Category':       AGE_CAT_MAP[age_cat],
-        'Total Interaction':  total_int,
-        'Usage Intensity':    USAGE_INTENSITY_MAP[usage_intensity_label],
-        'Usage-Anxiety':      ua_interaction,
-        'Likes Received (per post)':     likes,
-        'Comments Received (per post)':  comments,
-        'Social Anxiety Category':  pred_label,
-        'cluster':            cluster_id,
-        'Timestamp':          datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    'username': st.session_state.username,
+                    'Education Level': EDU_LEVEL_MAP[education],
+                    'Socioeconomic Status': SOCIOECONOMIC_MAP[socio],
+                    'Peer Comparison Frequency (1-10)': peer,
+                    'Body Image Impact (1-10)': body,
+                    'Sleep Quality Impact (1-10)': sleep_quality,
+                    'Self Confidence Impact (1-10)': conf,
+                    'Cyberbullying Experience (1-10)': cyber,
+                    'Anxiety Levels (1-10)': anxiety,
+                    'Age Category': AGE_CAT_MAP[age_cat],
+                    'Total Interaction': total_int,
+                    'Usage Intensity': USAGE_INTENSITY_MAP[usage_intensity_label],
+                    'Usage-Anxiety': ua_interaction,
+                    'Likes Received (per post)': likes,
+                    'Comments Received (per post)': comments,
+                    'Social Anxiety Category': pred_label,
+                    'cluster': cluster_id,
+                    'Timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 }])
                 entry.to_csv(DATA_FILE, mode='a', index=False, header=False)
                 st.success(f"Logged! Risk: **{pred_label}**, Cluster: **{cluster_id}**")

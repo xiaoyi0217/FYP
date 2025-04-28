@@ -5,7 +5,6 @@ import numpy as np
 import plotly.express as px
 from datetime import datetime
 import os
-import google.generativeai as genai
 from google import genai
 
 

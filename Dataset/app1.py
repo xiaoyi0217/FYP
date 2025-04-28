@@ -46,8 +46,6 @@ st.sidebar.write(f"👋 Hello, **{st.session_state.username}**")
 
 # APP LOGIC BELOW #
 # ==== API KEY SETUP (Hybrid) ==== #
-st.write("Secrets content:", st.secrets._secrets)
-
 api_key = st.secrets.get("OPENROUTER_API_KEY") or os.getenv("OPENROUTER_API_KEY")
 if not api_key:
     st.error("OpenRouter API key is missing! Add it to Streamlit secrets or set as environment variable.")
@@ -90,7 +88,7 @@ EDU_LEVEL_MAP       = {"Bachelor's":0,"Doctorate":1,"High School":2,"Master's":3
 SOCIOECONOMIC_MAP   = {'High':0,'Low':1,'Middle':2}
 AGE_CAT_MAP        = {'Adult':0,'Senior':1,'Youth':2}
 USAGE_INTENSITY_MAP = {'Low':1,'Medium':2,'High':0}
-SOCIAL_ANX_MAP      = {2:'High',0:'Low',1:'Medium'}
+SOCIAL_ANX_MAP      = {0:'High',1:'Low',2:'Medium'}
 PLOT_MAP            = {'Low':1,'Medium':2,'High':3}
 
 FEATURE_NAMES = [

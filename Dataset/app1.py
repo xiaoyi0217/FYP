@@ -172,12 +172,16 @@ def new_entry_page():
                 'Usage Anxiety Interaction': [ua_interaction]
             })
 
-# Ensure raw_feat is a 2D numpy array
-            raw_feat = raw_feat_df.values
+# Ensure raw_feat is a 2D numpy array and print its type
+            raw_feat = raw_feat_df.values  # This should now be a 2D numpy array
+            print(f"raw_feat type: {type(raw_feat)}")  # Check type of raw_feat
+
+# Ensure the model is correct
+            print(f"Type of rf_model: {type(rf_model)}")  # Should print <class 'sklearn.ensemble._forest.RandomForestClassifier'>
 
 # Make the prediction with the correct format
             if isinstance(rf_model, RandomForestClassifier):  # Ensure it is the correct model
-                pred = rf_model.predict(raw_feat)  # Use numpy array instead of DataFrame
+                pred = rf_model.predict(raw_feat)  # This should now work with the numpy array
                 pred_label = SOCIAL_ANX_MAP[pred[0]]  # Map the prediction to the label using SOCIAL_ANX_MAP
                 cluster_id = int(kmeans_model.predict(kmeans_scaler.transform(raw_feat))[0])
 
@@ -206,6 +210,7 @@ def new_entry_page():
                 st.success(f"Logged! Risk: **{pred_label}**, Cluster: **{cluster_id}**")
             else:
                 st.error("Error: rf_model is not a trained RandomForest model.")
+
             
 
 def progress_page():

@@ -221,16 +221,16 @@ def insights_page():
     
     if st.button("Get AI-Powered Recommendations"):
         prompt = (
-        f"- You are a friendly AI mental health coach.\n"
-        f"- User: {st.session_state.username}\n"
-        f"- Social Anxiety Category: {sa_cat}\n"
-        f"- Anxiety Level (1–10): {latest['Anxiety Levels (1-10)']}\n"
-        "- Give 3 actionable tips, make them funny."
-    )
-    response = get_gemini_response(prompt)
-    if response:
-        st.markdown("#### AI-Powered Recommendations")
-        st.markdown(response)
+            f"- You are a friendly AI mental health coach.\n"
+            f"- User: {st.session_state.username}\n"
+            f"- Social Anxiety Category: {sa_cat}\n"
+            f"- Anxiety Level (1–10): {latest['Anxiety Levels (1-10)']}\n"
+            "- Give 3 actionable tips, make them funny."
+        )
+        response = get_gemini_response(prompt)  # << MOVE inside
+        if response:
+            st.markdown("#### AI-Powered Recommendations")
+            st.markdown(response)
 
 def expert_dashboard():
     st.header("👩‍⚕️ Expert Dashboard")
